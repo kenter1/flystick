@@ -26,7 +26,7 @@ When the Raspberry Pi Zero came out, it seemed like a perfect hardware component
 
 1. `sudo apt-get install python-pygame git`
 
-2. http://abyz.co.uk/rpi/pigpio/download.html
+2. http://abyz.co.uk/rpi/pigpio/download.html -> Updated Website https://abyz.me.uk/rpi/pigpio/download.html
 
 3. *Optional:* from https://github.com/pimoroni/scroll-phat:
 
@@ -45,6 +45,7 @@ When the Raspberry Pi Zero came out, it seemed like a perfect hardware component
 
 4. Insert to [`/etc/rc.local`](https://www.raspberrypi.org/documentation/linux/usage/rc-local.md) BEFORE THE LINE `exit 0`:
 
+Requires Python 2 - Run using python2 
    ```
    pigpiod
    
