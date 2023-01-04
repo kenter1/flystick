@@ -30,44 +30,12 @@ except ImportError as e:
     logging.warn(e, exc_info=True)
     logging.warn("Failed to load pigpio library, running in debug mode")
     pigpio = None
-
-try:
-    import scrollphat
-except (ImportError, IOError) as e:
-    logging.warn(e, exc_info=True)
-    logging.warn("Failed to load Scroll pHAT library, you'll be missing all the fancy graphics")
-    scrollphat = None
-
+    
+scrollphat = None
 
 _running = False
 
 _output = ()
-
-
-def render():
-    # LED check
-    scrollphat.clear_buffer()
-    for col in range(0, 13):
-        if col > 1:
-            scrollphat.set_col(col - 2, 0)
-        if col < 11:
-            scrollphat.set_col(col, 0b11111)
-        scrollphat.update()
-        time.sleep(.1)
-
-    time.sleep(.3)
-
-    while _running:
-        scrollphat.clear_buffer()
-        # ``_output`` access should be thread-safe; de-referenced just once
-        for rend, value in zip(DISPLAY, _output):
-            try:
-                rend(value, scrollphat)
-            except ValueError as e:
-                logging.warn(e, exc_info=True)
-        scrollphat.update()
-        time.sleep(.05)
-
 
 def shutdown(signum, frame):
     global _running
@@ -96,14 +64,6 @@ def main():
         pi.wave_send_repeat(waves[-1])
     else:
         pi = None
-
-    if scrollphat:
-        scrollphat.clear()
-        scrollphat.set_brightness(DISPLAY_BRIGHTNESS)
-        # fork to avoid crash in case of I2C connection issues
-        th = threading.Thread(target=render)
-        th.daemon = True
-        th.start()
 
     prev = None
 
@@ -155,9 +115,7 @@ def main():
         # NO BUSYLOOPING. And locking with ``pygame.event.wait`` doesn't sound
         # very sophisticated. (At this point, at least.)
         time.sleep(.02)
-
-    if scrollphat:
-        scrollphat.clear()
+    
     if pi:
         pi.stop()
 
